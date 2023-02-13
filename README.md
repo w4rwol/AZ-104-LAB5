@@ -28,6 +28,8 @@ En esta tarea, implementará tres máquinas virtuales, cada una en una red virtu
 
 3. Si se le solicita que seleccione Bash o PowerShell , seleccione PowerShell .
 
+![Alt text](./img/1.PNG)
+
 **Nota :** si es la primera vez que inicia Cloud Shell y aparece el mensaje No tiene almacenamiento montado , seleccione la suscripción que está usando en este laboratorio y haga clic en Crear almacenamiento .
 
 4. En la barra de herramientas del panel de Cloud Shell, haga clic en el ícono Cargar/Descargar archivos , en el menú desplegable, haga clic en Cargar y cargue los archivos \Allfiles\Labs\05\az104-05-vnetvm-loop-template.json y \ Allfiles\Labs\05\az104-05-vnetvm-loop-parameters.json en el directorio principal de Cloud Shell.
@@ -45,13 +47,14 @@ $rgName = 'az104-05-rg1'
 
 New-AzResourceGroup -Name $rgName -Location $location1
 ```
+![Alt text](./img/2.PNG)
 
 **Nota :** Las regiones utilizadas anteriormente se probaron y se sabía que funcionaban cuando este laboratorio se revisó oficialmente por última vez. Si prefiere usar ubicaciones diferentes, o si ya no funcionan, deberá identificar dos regiones diferentes en las que se puedan implementar las máquinas virtuales D2Sv3 estándar.
 
 Para identificar las regiones de Azure, desde una sesión de PowerShell en Cloud Shell, ejecute ```(Get-AzLocation).Location```
 
 Una vez que haya identificado dos regiones que le gustaría usar, ejecute el siguiente comando en Cloud Shell para cada región para confirmar que puede implementar máquinas virtuales estándar D2Sv3.
-
+![Alt text](./img/3.PNG)
 ```
 az vm list-skus --location <Replace with your location> -o table --query "[? contains(name,'Standard_D2s')].name"
 ```
@@ -69,6 +72,9 @@ New-AzResourceGroupDeployment `
    -location2 $location2
 ```
 **Nota :** Espere a que se complete la implementación antes de continuar con el siguiente paso. Esto debería tomar alrededor de 2 minutos.
+
+![Alt text](./img/4PNG)
+![Alt text](./img/5.PNG)
 
 8. Cierre el panel de Cloud Shell.
 
@@ -118,24 +124,29 @@ Add-AzVirtualNetworkPeering -Name 'az104-05-vnet0_to_az104-05-vnet1' -VirtualNet
 
 Add-AzVirtualNetworkPeering -Name 'az104-05-vnet1_to_az104-05-vnet0' -VirtualNetwork $vnet1 -RemoteVirtualNetworkId $vnet0.Id
 ```
+![Alt text](./img/6.PNG)
 
 6. En la hoja de red virtual az104-05-vnet0 , en la sección Configuración , haga clic en Emparejamientos y luego haga clic en + Agregar .
 
 7. Agregue un emparejamiento con la siguiente configuración (deje los demás con sus valores predeterminados) y haga clic en Agregar :
 
-Configuración	Valor
-Esta red virtual: nombre del enlace de emparejamiento	az104-05-vnet0_to_az104-05-vnet2
-Esta red virtual: tráfico a la red virtual remota	Permitir (predeterminado)
-Esta red virtual: tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
-Puerta de enlace de red virtual	Ninguno
-Red virtual remota: nombre del enlace de emparejamiento	az104-05-vnet2_to_az104-05-vnet0
-Modelo de implementación de red virtual	Administrador de recursos
-Sé mi ID de recurso	no seleccionado
-Suscripción	el nombre de la suscripción de Azure que está utilizando en este laboratorio
-red virtual	az104-05-vnet2
-Tráfico a la red virtual remota	Permitir (predeterminado)
-Tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
-Puerta de enlace de red virtual	Ninguno
+| Configuración |	Valor |
+| -- | -- |
+| Esta red virtual: nombre del enlace de emparejamiento | az104-05-vnet0_to_az104-05-vnet2 |
+| Esta red virtual: tráfico a la red virtual remota |	Permitir (predeterminado) |
+| Esta red virtual: tráfico reenviado desde una red virtual remota |	Bloquear el tráfico que se origina fuera de esta red virtual |
+| Puerta de enlace de red virtual |	Ninguno |
+| Red virtual remota: nombre del enlace de emparejamiento |	az104-05-vnet2_to_az104-05-vnet0 |
+| Modelo de implementación de red virtual	| Administrador de recursos |
+| Sé mi ID de recurso |	no seleccionado |
+| Suscripción | el nombre de la suscripción de Azure que está utilizando en este laboratorio |
+| red virtual | az104-05-vnet2 |
+| Tráfico a la red virtual remota |	Permitir (predeterminado) |
+| Tráfico reenviado desde una red virtual remota | Bloquear el tráfico que se origina fuera de esta red virtual |
+| Puerta de enlace de red virtual |	Ninguno |
+| | |
+
+![Alt text](./img/7.PNG)
 
 **Nota :** este paso establece dos emparejamientos globales: uno de az104-05-vnet0 a az104-05-vnet2 y el otro de az104-05-vnet2 a az104-05-vnet0.
 
@@ -153,25 +164,31 @@ Add-AzVirtualNetworkPeering -Name 'az104-05-vnet0_to_az104-05-vnet2' -VirtualNet
 Add-AzVirtualNetworkPeering -Name 'az104-05-vnet2_to_az104-05-vnet0' -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vnet0.Id
 ```
 
+![Alt text](./img/8.PNG)
+
 8. Vuelva a la hoja Redes virtuales y, en la lista de redes virtuales, haga clic en az104-05-vnet1 .
 
 9. En la hoja de red virtual az104-05-vnet1 , en la sección Configuración , haga clic en Emparejamientos y luego haga clic en + Agregar .
 
 10. Agregue un emparejamiento con la siguiente configuración (deje los demás con sus valores predeterminados) y haga clic en Agregar :
 
-Configuración	Valor
-Esta red virtual: nombre del enlace de emparejamiento	az104-05-vnet1_to_az104-05-vnet2
-Esta red virtual: tráfico a la red virtual remota	Permitir (predeterminado)
-Esta red virtual: tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
-Puerta de enlace de red virtual	Ninguno
-Red virtual remota: nombre del enlace de emparejamiento	az104-05-vnet2_to_az104-05-vnet1
-Modelo de implementación de red virtual	Administrador de recursos
-Sé mi ID de recurso	no seleccionado
-Suscripción	el nombre de la suscripción de Azure que está utilizando en este laboratorio
-red virtual	az104-05-vnet2
-Tráfico a la red virtual remota	Permitir (predeterminado)
-Tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
-Puerta de enlace de red virtual	Ninguno
+| Configuración |	Valor |
+| -- | -- |
+| Esta red virtual: nombre del enlace de emparejamiento | az104-05-vnet1_to_az104-05-vnet2 |
+| Esta red virtual: tráfico a la red virtual remota |	Permitir (predeterminado) |
+|Esta red virtual: tráfico reenviado desde una red virtual remota	| Bloquear el tráfico que se origina fuera de esta red virtual |
+| Puerta de enlace de red virtual |	Ninguno |
+| Red virtual remota: nombre del enlace de emparejamiento |	az104-05-vnet2_to_az104-05-vnet1 |
+| Modelo de implementación de red virtual | Administrador de recursos |
+| Sé mi ID de recurso |	no seleccionado |
+| Suscripción | el nombre de la suscripción de Azure que está utilizando en este laboratorio |
+| red virtual | az104-05-vnet2 |
+| Tráfico a la red virtual remota |	Permitir (predeterminado) |
+| Tráfico reenviado desde una red virtual remota |	Bloquear el tráfico que se origina fuera de esta red virtual |
+| Puerta de enlace de red virtual |	Ninguno |
+| | |
+
+![Alt text](./img/9.PNG)
 
 **Nota :** este paso establece dos emparejamientos globales: uno de az104-05-vnet1 a az104-05-vnet2 y el otro de az104-05-vnet2 a az104-05-vnet1.
 
@@ -188,3 +205,4 @@ Add-AzVirtualNetworkPeering -Name 'az104-05-vnet1_to_az104-05-vnet2' -VirtualNet
 
 Add-AzVirtualNetworkPeering -Name 'az104-05-vnet2_to_az104-05-vnet1' -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vn
 ```
+![Alt text](./img/10.PNG)
