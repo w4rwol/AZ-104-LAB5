@@ -71,3 +71,120 @@ New-AzResourceGroupDeployment `
 **Nota :** Espere a que se complete la implementación antes de continuar con el siguiente paso. Esto debería tomar alrededor de 2 minutos.
 
 8. Cierre el panel de Cloud Shell.
+
+### Tarea 2: configurar el emparejamiento de redes virtuales locales y globales
+En esta tarea, configurará el emparejamiento local y global entre las redes virtuales que implementó en las tareas anteriores.
+
+1. En Azure Portal, busque y seleccione Redes virtuales .
+
+2. Revise las redes virtuales que creó en la tarea anterior y verifique que las dos primeras estén ubicadas en la misma región de Azure y la tercera en una región de Azure diferente.
+
+**Nota :** la plantilla que usó para la implementación de las tres redes virtuales garantiza que los intervalos de direcciones IP de las tres redes virtuales no se superpongan.
+
+3. En la lista de redes virtuales, haga clic en az104-05-vnet0 .
+
+4. En la hoja de red virtual az104-05-vnet0 , en la sección Configuración , haga clic en Emparejamientos y luego haga clic en + Agregar .
+
+5. Agregue un emparejamiento con la siguiente configuración (deje los demás con sus valores predeterminados) y haga clic en Agregar :
+
+| Configuración |	Valor |
+| -- | -- |
+| Esta red virtual: nombre del enlace de emparejamiento | az104-05-vnet0_to_az104-05-vnet1 |
+| Esta red virtual: tráfico a la red virtual remota |	Permitir (predeterminado) |
+| Esta red virtual: tráfico reenviado desde una red virtual remota | Bloquear el tráfico que se origina fuera de esta red virtual |
+| Puerta de enlace de red virtual |	Ninguno |
+| Red virtual remota: nombre del enlace de emparejamiento |	az104-05-vnet1_to_az104-05-vnet0 |
+| Modelo de implementación de red virtual | Administrador de recursos |
+| Sé mi ID de recurso |	no seleccionado |
+| Suscripción | el nombre de la suscripción de Azure que está utilizando en este laboratorio |
+| red virtual | az104-05-vnet1 |
+| Tráfico a la red virtual remota |	Permitir (predeterminado) |
+|Tráfico reenviado desde una red virtual remota	| Bloquear el tráfico que se origina fuera de esta red virtual |
+| Puerta de enlace de red virtual |	Ninguno |
+| | |
+
+**Nota :** este paso establece dos emparejamientos locales: uno de az104-05-vnet0 a az104-05-vnet1 y el otro de az104-05-vnet1 a az104-05-vnet0.
+
+**Nota :** en caso de que tenga un problema con la interfaz de Azure Portal que no muestra las redes virtuales creadas en la tarea anterior, puede configurar el emparejamiento ejecutando los siguientes comandos de PowerShell desde Cloud Shell:
+
+```
+$rgName = 'az104-05-rg1'
+
+$vnet0 = Get-AzVirtualNetwork -Name 'az104-05-vnet0' -ResourceGroupName $rgname
+
+$vnet1 = Get-AzVirtualNetwork -Name 'az104-05-vnet1' -ResourceGroupName $rgname
+
+Add-AzVirtualNetworkPeering -Name 'az104-05-vnet0_to_az104-05-vnet1' -VirtualNetwork $vnet0 -RemoteVirtualNetworkId $vnet1.Id
+
+Add-AzVirtualNetworkPeering -Name 'az104-05-vnet1_to_az104-05-vnet0' -VirtualNetwork $vnet1 -RemoteVirtualNetworkId $vnet0.Id
+```
+
+6. En la hoja de red virtual az104-05-vnet0 , en la sección Configuración , haga clic en Emparejamientos y luego haga clic en + Agregar .
+
+7. Agregue un emparejamiento con la siguiente configuración (deje los demás con sus valores predeterminados) y haga clic en Agregar :
+
+Configuración	Valor
+Esta red virtual: nombre del enlace de emparejamiento	az104-05-vnet0_to_az104-05-vnet2
+Esta red virtual: tráfico a la red virtual remota	Permitir (predeterminado)
+Esta red virtual: tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
+Puerta de enlace de red virtual	Ninguno
+Red virtual remota: nombre del enlace de emparejamiento	az104-05-vnet2_to_az104-05-vnet0
+Modelo de implementación de red virtual	Administrador de recursos
+Sé mi ID de recurso	no seleccionado
+Suscripción	el nombre de la suscripción de Azure que está utilizando en este laboratorio
+red virtual	az104-05-vnet2
+Tráfico a la red virtual remota	Permitir (predeterminado)
+Tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
+Puerta de enlace de red virtual	Ninguno
+
+**Nota :** este paso establece dos emparejamientos globales: uno de az104-05-vnet0 a az104-05-vnet2 y el otro de az104-05-vnet2 a az104-05-vnet0.
+
+**Nota :** en caso de que tenga un problema con la interfaz de Azure Portal que no muestra las redes virtuales creadas en la tarea anterior, puede configurar el emparejamiento ejecutando los siguientes comandos de PowerShell desde Cloud Shell:
+
+```
+$rgName = 'az104-05-rg1'
+
+$vnet0 = Get-AzVirtualNetwork -Name 'az104-05-vnet0' -ResourceGroupName $rgname
+
+$vnet2 = Get-AzVirtualNetwork -Name 'az104-05-vnet2' -ResourceGroupName $rgname
+
+Add-AzVirtualNetworkPeering -Name 'az104-05-vnet0_to_az104-05-vnet2' -VirtualNetwork $vnet0 -RemoteVirtualNetworkId $vnet2.Id
+
+Add-AzVirtualNetworkPeering -Name 'az104-05-vnet2_to_az104-05-vnet0' -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vnet0.Id
+```
+
+8. Vuelva a la hoja Redes virtuales y, en la lista de redes virtuales, haga clic en az104-05-vnet1 .
+
+9. En la hoja de red virtual az104-05-vnet1 , en la sección Configuración , haga clic en Emparejamientos y luego haga clic en + Agregar .
+
+10. Agregue un emparejamiento con la siguiente configuración (deje los demás con sus valores predeterminados) y haga clic en Agregar :
+
+Configuración	Valor
+Esta red virtual: nombre del enlace de emparejamiento	az104-05-vnet1_to_az104-05-vnet2
+Esta red virtual: tráfico a la red virtual remota	Permitir (predeterminado)
+Esta red virtual: tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
+Puerta de enlace de red virtual	Ninguno
+Red virtual remota: nombre del enlace de emparejamiento	az104-05-vnet2_to_az104-05-vnet1
+Modelo de implementación de red virtual	Administrador de recursos
+Sé mi ID de recurso	no seleccionado
+Suscripción	el nombre de la suscripción de Azure que está utilizando en este laboratorio
+red virtual	az104-05-vnet2
+Tráfico a la red virtual remota	Permitir (predeterminado)
+Tráfico reenviado desde una red virtual remota	Bloquear el tráfico que se origina fuera de esta red virtual
+Puerta de enlace de red virtual	Ninguno
+
+**Nota :** este paso establece dos emparejamientos globales: uno de az104-05-vnet1 a az104-05-vnet2 y el otro de az104-05-vnet2 a az104-05-vnet1.
+
+**Nota :** en caso de que tenga un problema con la interfaz de Azure Portal que no muestra las redes virtuales creadas en la tarea anterior, puede configurar el emparejamiento ejecutando los siguientes comandos de PowerShell desde Cloud Shell:
+
+```
+$rgName = 'az104-05-rg1'
+
+$vnet1 = Get-AzVirtualNetwork -Name 'az104-05-vnet1' -ResourceGroupName $rgname
+
+$vnet2 = Get-AzVirtualNetwork -Name 'az104-05-vnet2' -ResourceGroupName $rgname
+
+Add-AzVirtualNetworkPeering -Name 'az104-05-vnet1_to_az104-05-vnet2' -VirtualNetwork $vnet1 -RemoteVirtualNetworkId $vnet2.Id
+
+Add-AzVirtualNetworkPeering -Name 'az104-05-vnet2_to_az104-05-vnet1' -VirtualNetwork $vnet2 -RemoteVirtualNetworkId $vn
+```
